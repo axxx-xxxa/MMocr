@@ -1,0 +1,30 @@
+ninja_required_version = 1.3
+cxx = c++
+nvcc = /usr/local/cuda/bin/nvcc
+
+cflags = -pthread -B /home/veily/anaconda3/compiler_compat -Wl,--sysroot=/ -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -DWITH_CUDA -Immocr/models/utils/ops/rroi_align/csrc/csc -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/TH -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda/include -I/home/veily/anaconda3/include/python3.8 -c
+post_cflags = -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=csrc -D_GLIBCXX_USE_CXX11_ABI=0 -std=c++14
+cuda_cflags = -DWITH_CUDA -Immocr/models/utils/ops/rroi_align/csrc/csc -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/torch/csrc/api/include -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/TH -I/home/veily/anaconda3/lib/python3.8/site-packages/torch/include/THC -I/usr/local/cuda/include -I/home/veily/anaconda3/include/python3.8 -c
+cuda_post_cflags = -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ --expt-relaxed-constexpr --compiler-options ''"'"'-fPIC'"'"'' -DCUDA_HAS_FP16=1 -D__CUDA_NO_HALF_OPERATORS__ -D__CUDA_NO_HALF_CONVERSIONS__ -D__CUDA_NO_HALF2_OPERATORS__ -DTORCH_API_INCLUDE_EXTENSION_H -DTORCH_EXTENSION_NAME=csrc -D_GLIBCXX_USE_CXX11_ABI=0 -gencode=arch=compute_61,code=sm_61 -std=c++14
+ldflags = 
+
+rule compile
+  command = $cxx -MMD -MF $out.d $cflags -c $in -o $out $post_cflags
+  depfile = $out.d
+  deps = gcc
+
+rule cuda_compile
+  command = $nvcc $cuda_cflags -c $in -o $out $cuda_post_cflags
+
+
+
+build /media/veily/work/qi/day4/MMocr/MMocr/build/temp.linux-x86_64-3.8/mmocr/models/utils/ops/rroi_align/csrc/csc/vision.o: compile /media/veily/work/qi/day4/MMocr/MMocr/mmocr/models/utils/ops/rroi_align/csrc/csc/vision.cpp
+build /media/veily/work/qi/day4/MMocr/MMocr/build/temp.linux-x86_64-3.8/mmocr/models/utils/ops/rroi_align/csrc/csc/cpu/ROIAlign_cpu.o: compile /media/veily/work/qi/day4/MMocr/MMocr/mmocr/models/utils/ops/rroi_align/csrc/csc/cpu/ROIAlign_cpu.cpp
+build /media/veily/work/qi/day4/MMocr/MMocr/build/temp.linux-x86_64-3.8/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/ROIAlign_cuda.o: cuda_compile /media/veily/work/qi/day4/MMocr/MMocr/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/ROIAlign_cuda.cu
+build /media/veily/work/qi/day4/MMocr/MMocr/build/temp.linux-x86_64-3.8/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/RROIAlign_cuda.o: cuda_compile /media/veily/work/qi/day4/MMocr/MMocr/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/RROIAlign_cuda.cu
+build /media/veily/work/qi/day4/MMocr/MMocr/build/temp.linux-x86_64-3.8/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/ROIPool_cuda.o: cuda_compile /media/veily/work/qi/day4/MMocr/MMocr/mmocr/models/utils/ops/rroi_align/csrc/csc/cuda/ROIPool_cuda.cu
+
+
+
+
+
